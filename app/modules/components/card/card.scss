@@ -230,6 +230,32 @@ $iocaine: #b400d1;
     }
 }
 
+.card-custom-attributes {
+    padding: $wrap-padding;
+
+    .card-custom-attribute {
+        align-items: center;
+        border-radius: 4px;
+        display: flex;
+        /* stylelint-disable-next-line number-leading-zero */
+        font-size: 0.9rem;
+        font-weight: 85;
+        /* stylelint-disable-next-line number-leading-zero */
+        padding: 0.2rem;
+
+        .custom-attribute-name {
+            color: $color-black800;
+            font-weight: bold;
+        }
+
+        .custom-attribute-value {
+            color: $color-gray800;
+            /* stylelint-disable-next-line number-leading-zero */
+            margin-left: 0.2rem;
+        }
+    }
+}
+
 .card-epics {
     display: flex;
     flex-wrap: wrap;
