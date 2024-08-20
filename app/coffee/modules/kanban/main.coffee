@@ -470,7 +470,8 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
 
         loadPromises = [
             @rs.userstories.listAll(@scope.projectId, params),
-            @.loadSwimlanes()
+            @.loadSwimlanes(),
+            @rs.customAttributes.userstory.list(@scope.projectId)
         ]
 
         archivedPromises = []
@@ -490,21 +491,36 @@ class KanbanController extends mixOf(taiga.Controller, taiga.PageMixin, taiga.Fi
             @kanbanUserstoriesService.reset(false, false, false)
             userstories = result[0]
             swimlanes = result[1]
+            customAttributesDefinitions = result[2]
 
-            if result.length > 2
-                result.slice(2).forEach (archivedRedult) =>
-                    userstories = userstories.concat(archivedRedult)
+            if result.length > 3
+                result.slice(3).forEach (archivedResult) =>
+                    userstories = userstories.concat(archivedResult)
 
             @.notFoundUserstories = false
 
             if !userstories.length && ((@.filterQ && @.filterQ.length) || Object.keys(@location.search()).length)
                 @.notFoundUserstories = true
 
-            @kanbanUserstoriesService.init(@scope.project, swimlanes, @scope.usersById)
-            @tgLoader.pageLoaded()
-            @.renderUserStories(userstories)
+            idToNameMapping = {}
+            customAttributesDefinitions.forEach (definition) =>
+                idToNameMapping[definition.id] = definition.name
 
-            return userstories
+            customAttributesPromises = userstories.map (us) =>
+                @rs.customAttributesValues.userstory.get(us.id).then (customAttributesValues) =>
+                    us.custom_attributes_values = _.map customAttributesValues._attrs.attributes_values, (value, key) =>
+                        return {
+                            id: key,
+                            name: idToNameMapping[key],
+                            value: value
+                        }
+
+            return @q.all(customAttributesPromises).then =>
+                @kanbanUserstoriesService.init(@scope.project, swimlanes, @scope.usersById)
+                @tgLoader.pageLoaded()
+                @.renderUserStories(userstories)
+
+                return userstories
 
         return promise
 
