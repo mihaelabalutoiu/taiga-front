@@ -249,6 +249,12 @@ class KanbanUserstoriesService extends taiga.Service
         us.colorized_tags = _.map us.model.tags, (tag) =>
             return {name: tag[0], color: tag[1]}
 
+        us.custom_attributes_values = _.map usModel.custom_attributes_values, (customAttribute) =>
+            return {
+                name: customAttribute.name,
+                value: customAttribute.value
+            }
+
         return us
 
     refresh: (refreshUsMap = true, refreshSwimlanes = true) ->

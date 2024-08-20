@@ -1,0 +1,14 @@
+//- This source code is licensed under the terms of the
+//- GNU Affero General Public License found in the LICENSE file in
+//- the root directory of this source tree.
+//-
+//- Copyright (c) 2021-present Kaleidos INC
+
+.card-custom-attributes(ng-if="vm.item.get('custom_attributes_values').size")
+    span.card-custom-attribute(
+        tg-repeat="custom_attribute in vm.item.get('custom_attributes_values') track by $index"
+        title="{{::custom_attribute.get('name')}} : {{::custom_attribute.get('value')}}"
+    )
+        div(ng-if="vm.zoomLevel == 1 || vm.zoomLevel == 3" ng-class="{'zoom-level-1': vm.zoomLevel == 1 || vm.zoomLevel == 3}")
+            span.custom-attribute-name {{ custom_attribute.get('name') }}:
+            span.custom-attribute-value {{ custom_attribute.get('value') }}
